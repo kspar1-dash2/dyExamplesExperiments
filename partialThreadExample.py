@@ -34,7 +34,7 @@ testProcessDocuments = [{
    "procDate": datetime.utcnow(),
       "data": {
          "inputRate": 3600,  
-         "serviceRate": 3000, 
+         "serviceRate": 3000
       }
    },
    { 
@@ -45,7 +45,7 @@ testProcessDocuments = [{
    "procDate": datetime.utcnow(),
       "data": {
          "inputRate": 3200,  
-         "serviceRate": 2800, 
+         "serviceRate": 2800
       }
    }
    ]
@@ -60,7 +60,7 @@ testProcessDocuments = [{
    "procDate": datetime.utcnow(),
       "data": {
          "inputRate": 3700,  
-         "serviceRate": 2900, 
+         "serviceRate": 2900
       }
    },
    { 
@@ -71,7 +71,7 @@ testProcessDocuments = [{
    "procDate": datetime.utcnow(),
       "data": {
          "inputRate": 3300,  
-         "serviceRate": 2900, 
+         "serviceRate": 2900
       }
    }
    ]
@@ -118,11 +118,25 @@ if result:
     processArray = process['processes'] 
     pprint.pprint(processArray)
 
+    ct = 0
     for processDetails in processArray:
       print("\n")
       print(f"ID:{id}, title:{processDetails['title']}, processCount:{str(processDetails['processCount'])}, \
        inputRate:{str(processDetails['data']['inputRate'])}")
-  #    print(ar['processCount'])
+
+      ### NEW CODE that updates existing collection with minVal field (under processes.data)
+
+      inputRate = processDetails['data']['inputRate']
+      serviceRate = processDetails['data']['serviceRate'] 
+  
+      minVal = min(inputRate,serviceRate)
+      processesCollection.update_one(
+        {"_id":id},
+        {"$set" : {"processes." + str(ct) + ".data.newVal" : minVal}}
+                                     )
+      ct += 1
+      
+      ### end of new code
 else:
   print("No documents found.")
 
